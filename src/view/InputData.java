@@ -3,8 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package input.data.siswa;
+package view;
 
+import com.sun.istack.internal.Nullable;
+import data.Siswa;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
@@ -17,8 +21,12 @@ public class InputData extends javax.swing.JFrame {
     /**
      * Creates new form InputData
      */
-    public InputData() {
+    public InputData(@Nullable Siswa siswa) {
         initComponents();
+        setupFrame();
+        if (siswa != null) {
+            setData(siswa);
+        }
     }
 
     /**
@@ -52,7 +60,7 @@ public class InputData extends javax.swing.JFrame {
         btnTambah = new javax.swing.JButton();
         btnBatal = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Program Input Data Siswa");
 
         jLabel1.setText("Nama");
@@ -234,19 +242,16 @@ public class InputData extends javax.swing.JFrame {
     }//GEN-LAST:event_cbMusikActionPerformed
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-        System.exit(0);
+        dispose();
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         // TODO add your handling code here:
         if (isFormValid()) {
-            String message = "Nama: " + fieldNama.getText()
-                    + "\nNIS: " + fieldNis.getText()
-                    + "\nAlamat: " + fieldAlamat.getText()
-                    + "\nTTL: " + fieldTtl.getText()
-                    + "\nJenis Kelamin: " + getSelectedGender()
-                    + "\nHobi: " + getStringFromList(getHobies());
-            JOptionPane.showMessageDialog(this, message);
+            Siswa siswa = new Siswa(fieldNama.getText(), fieldNis.getText(), fieldAlamat.getText(), fieldTtl.getText(), getSelectedGender(), getHobies());
+            DaftarSiswa.addNewSiswa(siswa);
+            dispose();
+            JOptionPane.showMessageDialog(this, "Berhasil menambahkan data!");
         }
 
     }//GEN-LAST:event_btnTambahActionPerformed
@@ -280,7 +285,7 @@ public class InputData extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            new InputData().setVisible(true);
+            new InputData(null).setVisible(true);
         });
     }
 
@@ -384,5 +389,22 @@ public class InputData extends javax.swing.JFrame {
             }
         }
         return valid;
+    }
+
+    private void setupFrame() {
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+    }
+
+    private void setData(Siswa siswa) {
+        fieldNama.setText(siswa.getNama());
+        fieldNis.setText(siswa.getNis());
+        fieldAlamat.setText(siswa.getAlamat());
+        fieldTtl.setText(siswa.getTtl());
+        rbL.setSelected(siswa.getGender() == rbL.getText());
+        rbP.setSelected(siswa.getGender() == rbP.getText());
+        for (int i = 0; i < siswa.getHoby().size(); i++) {
+            cbMusik.setSelected(cbMusik.getText() == siswa.getHoby().get(i));
+        }
     }
 }
